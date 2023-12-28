@@ -2,13 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Books;
+use app\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
 class BooksController extends Controller
 {
@@ -20,22 +21,33 @@ class BooksController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout'],
+                'only'  => ['logout'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::class,
+            'verbs'  => [
+                'class'   => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
             ],
         ];
+    }
+
+    public function beforeAction($action): Response|bool|\yii\console\Response
+    {
+        if (Yii::$app->user->isGuest && Url::current() != '/login') {
+            return Yii::$app->getResponse()->redirect(['/login']);
+        }
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -44,11 +56,11 @@ class BooksController extends Controller
     public function actions(): array
     {
         return [
-            'error' => [
+            'error'   => [
                 'class' => 'yii\web\ErrorAction',
             ],
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
+                'class'           => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
@@ -61,6 +73,30 @@ class BooksController extends Controller
      */
     public function actionIndex(): string
     {
-        return $this->render('books');
+        return $this->render('books', [
+            'books' => Books::find()->all(),
+        ]);
+    }
+
+    /**
+     * Login action.
+     *
+     * @return Response|string
+     */
+    public function actionLogin(): Response|string
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        }
+
+        $model->password = '';
+        return $this->render('login', [
+            'model' => $model,
+        ]);
     }
 }
