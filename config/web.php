@@ -52,8 +52,10 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName'  => false,
             'rules'           => [
-                '/'      => 'books/index',
-                '/login' => 'books/login',
+                '/'          => 'books/index',
+                '/login'     => 'books/login',
+                '/books/get' => 'books/get',
+                '/logout'    => 'books/logout',
             ],
         ],
     ],

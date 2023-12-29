@@ -7,12 +7,14 @@ use app\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 
 class BooksController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -99,4 +101,22 @@ class BooksController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionGet(): bool|string
+    {
+        dump(Yii::$app->request->get('id'));
+        return Json::encode(
+            Books::find()->where(['id' => Yii::$app->request->get('id')])->all()
+        );
+    }
+
+    public function actionLogout(): Response
+    {
+        // Perform logout actions
+        Yii::$app->user->logout();
+
+        // Redirect to the desired page after logout
+        return $this->redirect(['/login']);
+    }
+
 }
