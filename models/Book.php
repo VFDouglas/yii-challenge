@@ -4,7 +4,7 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 
-class Books extends ActiveRecord
+class Book extends ActiveRecord
 {
     public static function tableName(): string
     {

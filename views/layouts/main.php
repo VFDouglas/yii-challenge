@@ -36,6 +36,7 @@ $this->registerLinkTag(
         'href' => Yii::getAlias('@web/favicon.ico'),
     ]
 );
+$this->registerJsFile('https://kit.fontawesome.com/7fc0456012.js');
 $this->beginPage();
 ?>
 <!DOCTYPE html>
@@ -47,6 +48,7 @@ $this->beginPage();
         ?>
     </head>
     <body class="d-flex flex-column h-100">
+        <div class="spinner d-none"></div>
         <?php
         $this->beginBody();
         ?>
@@ -63,7 +65,7 @@ $this->beginPage();
                         ?>
                         <?= Yii::$app->name; ?>
                     </a>
-                    <div class="collapse navbar-collapse justify-content-end">
+                    <div class="justify-content-end">
                         <?php
                         if (!Yii::$app->user->getIsGuest()) {
                             $form = ActiveForm::begin([
@@ -72,7 +74,7 @@ $this->beginPage();
                             ]);
                             echo Html::submitButton(
                                 'Logout',
-                                ['class' => 'btn btn-warning px-4']
+                                ['class' => 'btn btn-warning px-sm-5']
                             );
                             ActiveForm::end();
                         }
@@ -100,8 +102,7 @@ $this->beginPage();
                     <div class="col-md-6 text-center text-md-start">&copy; My
                         Company <?= date('Y') ?></div>
                     <div
-                        class="col-md-6 text-center text-md-end"><?= Yii::powered(
-                        ) ?></div>
+                        class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
                 </div>
             </div>
         </footer>

@@ -1,3 +1,29 @@
+.spinner {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 60px;
+    width: 60px;
+    margin: 0 auto;
+    animation: rotation .6s infinite linear;
+    border-left: 6px solid rgba(0, 174, 239, .15);
+    border-right: 6px solid rgba(0, 174, 239, .15);
+    border-bottom: 6px solid rgba(0, 174, 239, .15);
+    border-top: 6px solid rgba(0, 174, 239, .8);
+    border-radius: 100%;
+    z-index: 10500;
+    box-shadow: 0 0 0 max(100vh, 100vw) rgba(0, 0, 0, .3);
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
 main > .container {
     padding: 70px 15px 20px;
 }
@@ -89,4 +115,20 @@ a.desc:after {
 
 .top-20 {
     top: 20vh !important;
+}
+
+.top-25 {
+    top: 25vh !important;
+}
+
+#img_no_book_found {
+    width: 10% !important;
+}
+
+.book_description {
+    height: 80px;
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
 }

@@ -2,8 +2,9 @@
 
 namespace app\controllers;
 
-use app\models\Books;
+use app\models\Book;
 use app\models\LoginForm;
+use Exception;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -14,6 +15,7 @@ use yii\web\Response;
 
 class BooksController extends Controller
 {
+    private const PAGE_LIMIT = 8;
 
     /**
      * {@inheritdoc}
@@ -76,7 +78,7 @@ class BooksController extends Controller
     public function actionIndex(): string
     {
         return $this->render('books', [
-            'books' => Books::find()->all(),
+            'books' => Book::find()->all(),
         ]);
     }
 
@@ -104,18 +106,77 @@ class BooksController extends Controller
 
     public function actionGet(): bool|string
     {
-        dump(Yii::$app->request->get('id'));
-        return Json::encode(
-            Books::find()->where(['id' => Yii::$app->request->get('id')])->all()
-        );
+        $limit  = Yii::$app->request->get('limit', self::PAGE_LIMIT);
+        $offset = (Yii::$app->request->get('page', 1) - 1) * $limit;
+        $books  = Book::find()
+            ->offset($offset)
+            ->limit($limit);
+
+        if (Yii::$app->request->get('id')) {
+            $books->where(['id' => Yii::$app->request->get('id')]);
+        }
+        return Json::encode([
+            'metadata' => [
+                'total' => $books->count(),
+                'limit' => Yii::$app->request->get('limit', self::PAGE_LIMIT),
+            ],
+            'data'     => $books->all()
+        ]);
+    }
+
+    public function actionPost(): string
+    {
+        $response = ['error' => ''];
+        try {
+            $book               = new Book();
+            $book->title        = Yii::$app->request->post('title');
+            $book->author       = Yii::$app->request->post('author');
+            $book->description  = Yii::$app->request->post('description');
+            $book->pages_number = Yii::$app->request->post('pages_number');
+            $book->save();
+        } catch (Exception $e) {
+            $response['error'] = 'Error saving the book';
+        }
+        return Json::encode($response);
+    }
+
+    public function actionPut($bookId): string
+    {
+        $response = ['error' => ''];
+        try {
+            $book               = Book::findOne($bookId);
+            $book->id           = Yii::$app->request->post('id');
+            $book->title        = Yii::$app->request->post('title');
+            $book->author       = Yii::$app->request->post('author');
+            $book->description  = Yii::$app->request->post('description');
+            $book->pages_number = Yii::$app->request->post('pages_number');
+            $book->save();
+        } catch (Exception $e) {
+            $response['error'] = 'Error saving the book';
+        }
+        return Json::encode($response);
+    }
+
+    public function actionDelete($bookId): string
+    {
+        $response = ['error' => ''];
+        try {
+            $book = Book::findOne($bookId);
+            if ($book) {
+                $book->delete();
+            } else {
+                $response['error'] = 'The book you tried to delete was already deleted or not found.';
+            }
+        } catch (Exception $e) {
+            $response['error'] = 'Error deleting the book';
+        }
+        return Json::encode($response);
     }
 
     public function actionLogout(): Response
     {
-        // Perform logout actions
         Yii::$app->user->logout();
 
-        // Redirect to the desired page after logout
         return $this->redirect(['/login']);
     }
 
