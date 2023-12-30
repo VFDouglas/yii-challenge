@@ -4,19 +4,23 @@ if (window.$) {
     $.ajaxSetup({
         headers: {
             'Content-Type'    : 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
+            'X-Requested-With': 'XMLHttpRequest',
+        },
     });
 }
 
+let lastPageSearch = 1;
+
 const AJAX_HEADERS = new Headers({
     'Content-Type'    : 'application/json',
-    'X-Requested-With': 'XMLHttpRequest'
+    'X-Requested-With': 'XMLHttpRequest',
 });
 
 function refreshTooltips() {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map(
+        tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
 function showLoading(show = true) {
@@ -79,9 +83,6 @@ async function showBooks(params = {}) {
                 <div class="col-12 text-center text-black-50">
                     <h5>The registered books will appear here</h5>
                 </div>
-                <div class="col-12">
-                
-                </div>
             </div>
         `;
     }
@@ -93,8 +94,9 @@ async function showBooks(params = {}) {
         max      : jsonResponse.metadata.limit,
         qttPages : 5,
         id       : 'pagination',
-        callback : 'showBooks'
+        callback : 'showBooks',
     });
+    lastPageSearch = params.page;
 }
 
 async function getBooks(params = {}) {
@@ -117,11 +119,11 @@ async function editBook(id) {
 
     const jsonResponse = await getBooks({id});
 
-    document.getElementById('book_id').value           = jsonResponse[0].id;
-    document.getElementById('edit_title').value        = jsonResponse[0].title;
-    document.getElementById('edit_description').value  = jsonResponse[0].description;
-    document.getElementById('edit_author').value       = jsonResponse[0].author;
-    document.getElementById('edit_pages_number').value = jsonResponse[0].pages_number;
+    document.getElementById('book_id').value           = jsonResponse.data[0].id;
+    document.getElementById('edit_title').value        = jsonResponse.data[0].title;
+    document.getElementById('edit_description').value  = jsonResponse.data[0].description;
+    document.getElementById('edit_author').value       = jsonResponse.data[0].author;
+    document.getElementById('edit_pages_number').value = jsonResponse.data[0].pages_number;
 
     bootstrap.Modal.getOrCreateInstance('#modal_edit_book').show();
     showLoading(false);
@@ -134,8 +136,8 @@ function deleteBook(id) {
         method : 'DELETE',
         headers: AJAX_HEADERS,
         body   : JSON.stringify({
-            _csrf: yii.getCsrfToken()
-        })
+            _csrf: yii.getCsrfToken(),
+        }),
     };
 
     fetch(`/books/delete/${id}`, options).then(function (response) {
@@ -166,7 +168,7 @@ function deleteBook(id) {
  * @param {string} params.callback Function to be bound to the pagination buttons
  */
 function pagination(params = {}) {
-    console.log(params)
+    console.log(params);
     if (!params.qttPages) {
         params.qttPages = 5;
     }
@@ -179,11 +181,15 @@ function pagination(params = {}) {
         let pgs   = Math.ceil(params.recordQtt / params.max);
         let first = Math.ceil(params.page - params.qttPages / 2);
 
-        if (first <= 0 && first < params.qttPages) first = 1;
+        if (first <= 0 && first < params.qttPages) {
+            first = 1;
+        }
 
         let ult = first + params.qttPages - 1;
 
-        if (ult > pgs) ult = pgs;
+        if (ult > pgs) {
+            ult = pgs;
+        }
 
         let previous   = params.page - 1;
         let next       = params.page + 1;
@@ -194,14 +200,14 @@ function pagination(params = {}) {
                 pagination += `
                     <li class='page-item'>
                         <button type='button' class='page-link h-100' onclick='${params.callback}({page: 1})' 
-                                aria-label='Previous'>
+                                aria-label='First' data-bs-toggle="tooltip" title="First Page">
                             <i class='fa-solid fa-angle-double-left mt-1'></i>
                         </button>
                     </li>
                 `;
                 pagination += `
                     <li class='page-item'>
-                        <button type='button' class='page-link h-100'
+                        <button type='button' class='page-link h-100' data-bs-toggle="tooltip" title="Previous Page"
                                 onclick='${params.callback}(" + anterior + ")' aria-label='Previous'>
                             <i class='fa-solid fa-angle-left mt-1'></i>
                         </button>
@@ -246,16 +252,16 @@ function pagination(params = {}) {
             if (next <= pgs) {
                 pagination += `
                     <li class='page-item'>
-                        <button type='button' class='page-link h-100' onclick='${params.callback}({page: proximo})'
-                                aria-label='Next'>
+                        <button type='button' class='page-link h-100' onclick='${params.callback}({page: ${next}})'
+                                aria-label='Next' data-bs-toggle="tooltip" title="Next Page">
                             <i class='fa-solid fa-angle-right mt-1'></i>
                         </button>
                     </li>
                 `;
                 pagination += `
                     <li class='page-item'>
-                        <button type='button' class='page-link h-100' onclick='${params.callback}({page: pgs})'
-                                aria-label='Next'>
+                        <button type='button' class='page-link h-100' onclick='${params.callback}({page: ${pgs}})'
+                                aria-label='Next' data-bs-toggle="tooltip" title="Last Page">
                             <i class='fa-solid fa-angle-double-right mt-1'></i>
                         </button>
                     </li>
@@ -281,6 +287,7 @@ function pagination(params = {}) {
     } else {
         document.getElementById(params.id)?.classList.add('d-none');
     }
+    refreshTooltips();
 }
 
 document.getElementById('btn_add_book').addEventListener('click', function () {
@@ -290,39 +297,48 @@ document.getElementById('btn_add_book').addEventListener('click', function () {
 
     bootstrap.Modal.getOrCreateInstance('#modal_edit_book').show();
 });
-document.getElementById('form_save_book').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.getElementById('form_save_book')
+    .addEventListener('submit', function (event) {
+        event.preventDefault();
 
-    let options = {
-        method : document.getElementById('request_method').value,
-        headers: AJAX_HEADERS,
-        body   : JSON.stringify({
-            _csrf       : yii.getCsrfToken(),
-            id          : document.getElementById('book_id').value,
-            title       : document.getElementById('edit_title').value,
-            description : document.getElementById('edit_description').value,
-            author      : document.getElementById('edit_author').value,
-            pages_number: document.getElementById('edit_pages_number').value
-        })
-    }
+        let method  = document.getElementById('request_method')
+            .value.toUpperCase();
+        let options = {
+            method : method,
+            headers: AJAX_HEADERS,
+            body   : JSON.stringify({
+                _csrf       : yii.getCsrfToken(),
+                title       : document.getElementById('edit_title').value,
+                description : document.getElementById('edit_description').value,
+                author      : document.getElementById('edit_author').value,
+                pages_number: document.getElementById('edit_pages_number').value,
+            }),
+        };
 
-    showLoading(true);
+        showLoading(true);
 
-    fetch(`/books/post`, options).then(function (response) {
-        if (!response.ok) {
-            showLoading(false);
-            alert('Error sending request');
-            return false;
+        let requestMethod;
+        if (method === 'POST') {
+            requestMethod = 'post';
+        } else {
+            requestMethod = `put/${document.getElementById('book_id').value}`;
         }
-        response.json().then(function (jsonResponse) {
-            showLoading(true);
-            if (!jsonResponse.error) {
-                showBooks();
-                bootstrap.Modal.getOrCreateInstance('#modal_edit_book').hide();
-            } else {
-                alert('Error creating the book');
+        fetch(`/books/${requestMethod}`, options).then(function (response) {
+            if (!response.ok) {
+                showLoading(false);
+                alert('Error sending request');
+                return false;
             }
+            response.json().then(function (jsonResponse) {
+                showLoading(false);
+                if (!jsonResponse.error) {
+                    showBooks({page: lastPageSearch});
+                    bootstrap.Modal.getOrCreateInstance('#modal_edit_book')
+                        .hide();
+                } else {
+                    alert(jsonResponse.error);
+                }
+            });
         });
+        showLoading(true);
     });
-    showLoading(true);
-});

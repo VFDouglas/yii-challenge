@@ -20,7 +20,7 @@ $config = [
             'cookieValidationKey' => 'xw5qpw1VIMP-mzG2xBRLNgMA9_uFVpzO',
             'parsers'             => [
                 'application/json' => 'yii\web\JsonParser',
-            ]
+            ],
         ],
         'cache'        => [
             'class' => 'yii\caching\FileCache',
@@ -55,13 +55,14 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName'  => false,
             'rules'           => [
-                '/'                          => 'books/index',
-                '/login'                     => 'books/login',
-                '/books/get'                 => 'books/get',
-                '/books/post'                => 'books/post',
-                '/books/put/<bookId:\d+>'    => 'books/put',
-                '/books/delete/<bookId:\d+>' => 'books/delete',
-                '/logout'                    => 'books/logout',
+                '/'                          => 'site/index',
+                '/books'                     => 'site/books',
+                '/login'                     => 'site/login',
+                '/books/get'                 => 'site/get',
+                '/books/post'                => 'site/post',
+                '/books/put/<bookId:\d+>'    => 'site/put',
+                '/books/delete/<bookId:\d+>' => 'site/delete',
+                '/logout'                    => 'site/logout',
             ],
         ],
     ],

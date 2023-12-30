@@ -2,16 +2,22 @@
 
 namespace app\controllers;
 
+use app\models\Book;
+use app\models\LoginForm;
+use Exception;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
 class SiteController extends Controller
 {
+
+    private const PAGE_LIMIT = 8;
+
     /**
      * {@inheritdoc}
      */
@@ -20,22 +26,33 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout'],
+                'only'  => ['logout'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::class,
+            'verbs'  => [
+                'class'   => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
             ],
         ];
+    }
+
+    public function beforeAction($action): Response|bool|\yii\console\Response
+    {
+        if (Yii::$app->user->isGuest && Url::current() != '/login') {
+            return Yii::$app->getResponse()->redirect(['/login']);
+        }
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -44,14 +61,19 @@ class SiteController extends Controller
     public function actions(): array
     {
         return [
-            'error' => [
+            'error'   => [
                 'class' => 'yii\web\ErrorAction',
             ],
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
+                'class'           => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+
+    public function actionIndex()
+    {
+        return $this->render('home');
     }
 
     /**
@@ -59,9 +81,11 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string
+    public function actionBooks(): string
     {
-        return $this->render('index');
+        return $this->render('books', [
+            'books' => Book::find()->all(),
+        ]);
     }
 
     /**
@@ -86,43 +110,79 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
+    public function actionGet(): bool|string
+    {
+        $limit  = Yii::$app->request->get('limit', self::PAGE_LIMIT);
+        $offset = (Yii::$app->request->get('page', 1) - 1) * $limit;
+        $books  = Book::find()
+            ->offset($offset)
+            ->limit($limit);
+
+        if (Yii::$app->request->get('id')) {
+            $books->where(['id' => Yii::$app->request->get('id')]);
+        }
+        return Json::encode([
+            'metadata' => [
+                'total' => $books->count(),
+                'limit' => Yii::$app->request->get('limit', self::PAGE_LIMIT),
+            ],
+            'data'     => $books->all(),
+        ]);
+    }
+
+    public function actionPost(): string
+    {
+        $response = ['error' => ''];
+        try {
+            $book               = new Book();
+            $book->title        = Yii::$app->request->post('title');
+            $book->author       = Yii::$app->request->post('author');
+            $book->description  = Yii::$app->request->post('description');
+            $book->pages_number = Yii::$app->request->post('pages_number');
+            $book->save();
+        } catch (Exception $e) {
+            $response['error'] = 'Error saving the book';
+        }
+        return Json::encode($response);
+    }
+
+    public function actionPut($bookId): string
+    {
+        $response = ['error' => ''];
+        try {
+            $book               = Book::findOne($bookId);
+            $book->title        = Yii::$app->request->post('title');
+            $book->author       = Yii::$app->request->post('author');
+            $book->description  = Yii::$app->request->post('description');
+            $book->pages_number = Yii::$app->request->post('pages_number');
+            $book->save();
+        } catch (Exception $e) {
+            $response['error'] = $e->getMessage();
+        }
+        return Json::encode($response);
+    }
+
+    public function actionDelete($bookId): string
+    {
+        $response = ['error' => ''];
+        try {
+            $book = Book::findOne($bookId);
+            if ($book) {
+                $book->delete();
+            } else {
+                $response['error'] = 'The book you tried to delete was already deleted or not found.';
+            }
+        } catch (Exception $e) {
+            $response['error'] = 'Error deleting the book';
+        }
+        return Json::encode($response);
+    }
+
     public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect(['/login']);
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact(): Response|string
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout(): string
-    {
-        return $this->render('about');
-    }
 }

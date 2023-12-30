@@ -7,7 +7,8 @@ use yii\db\ActiveRecord;
  * @var array|ActiveRecord[] $books
  */
 
-$this->title = 'Books';
+$this->title                   = 'Books';
+$this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/books.js', ['position' => yii\web\View::POS_END, 'defer' => true]);
 ?>
 <div class="modal fade" id="modal_edit_book" tabindex="-1">
