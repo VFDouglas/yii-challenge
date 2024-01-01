@@ -1,4 +1,4 @@
-echo "CREATE DATABASE yii2basic" > ./init.sql
+echo "CREATE DATABASE yii2basic;" > init.sql
 docker-compose down
 docker-compose up -d
 docker-compose exec php pecl install --force redis && rm -rf /tmp/pear && docker-php-ext-enable redis

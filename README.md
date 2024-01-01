@@ -27,4 +27,6 @@ Then run the install script
 ```
 ./install.sh
 ```
+Confirm the asked prompts.
+
 When the script finishes, you should be able to run the project on http://localhost:8000/.
