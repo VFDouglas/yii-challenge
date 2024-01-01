@@ -2,7 +2,7 @@
 
 return [
     'class'    => 'yii\db\Connection',
-    'dsn'      => 'mysql:host=yii-php-challenge-mysql-1;port=3306;dbname=yii2basic',
+    'dsn'      => 'mysql:host=yii-challenge-mysql-1;port=3306;dbname=yii2basic',
     'username' => 'root',
     'password' => 'root',
     'charset'  => 'utf8',
