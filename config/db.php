@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
+    'class'    => 'yii\db\Connection',
+    'dsn'      => 'mysql:host=yii-php-challenge-mysql-1;port=3306;dbname=yii2basic',
     'username' => 'root',
-    'password' => '',
-    'charset' => 'utf8',
+    'password' => 'root',
+    'charset'  => 'utf8',
 
     // Schema cache options (for production environment)
     //'enableSchemaCache' => true,

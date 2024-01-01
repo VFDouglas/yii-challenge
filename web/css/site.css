@@ -132,3 +132,11 @@ a.desc:after {
 .cursor-pointer {
     cursor: pointer !important;
 }
+
+.bg-light-gray {
+    background-color: lightgray !important;
+}
+
+.carousel-control-prev, .carousel-control-next {
+    width: 5% !important;
+}

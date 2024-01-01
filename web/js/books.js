@@ -11,18 +11,6 @@ if (window.$) {
 
 let lastPageSearch = 1;
 
-const AJAX_HEADERS = new Headers({
-    'Content-Type'    : 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-});
-
-function refreshTooltips() {
-    const tooltipTriggerList = document.querySelectorAll(
-        '[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(
-        tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-}
-
 function showLoading(show = true) {
     document.activeElement.blur();
     if (show) {
@@ -35,6 +23,7 @@ function showLoading(show = true) {
 }
 
 async function showBooks(params = {}) {
+    params.search = document.getElementById('search').value;
     showLoading(true);
     const jsonResponse = await getBooks(params);
 
@@ -104,8 +93,7 @@ async function getBooks(params = {}) {
         method: 'GET',
     };
     const paramsQuery = new URLSearchParams(params);
-
-    const response = await fetch(`/books/get?${paramsQuery.toString()}`, options);
+    const response    = await fetch(`/books/get?${paramsQuery.toString()}`, options);
     return await response.json();
 }
 
@@ -142,7 +130,6 @@ function deleteBook(id) {
 
     fetch(`/books/delete/${id}`, options).then(function (response) {
         if (!response.ok) {
-            console.log(response);
             alert('Error retrieving data from the server');
             showLoading(false);
             return false;
@@ -168,7 +155,6 @@ function deleteBook(id) {
  * @param {string} params.callback Function to be bound to the pagination buttons
  */
 function pagination(params = {}) {
-    console.log(params);
     if (!params.qttPages) {
         params.qttPages = 5;
     }
@@ -342,3 +328,8 @@ document.getElementById('form_save_book')
         });
         showLoading(true);
     });
+document.getElementById('search_books').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    showBooks();
+});

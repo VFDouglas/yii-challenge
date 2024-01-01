@@ -40,10 +40,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ->passwordInput(['placeholder' => '********']);
                     ?>
                     <div class="row">
-                        <div class="col-12">
-                            <a class="text-decoration-none float-end" href="http://ssp.bartofil.com.br/"
-                               target="_blank" rel="noopener noreferrer">Forgot password</a>
-                        </div>
                         <div class="col-12 text-end">
                             <?=
                             Html::submitButton(

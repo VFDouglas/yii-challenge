@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Book;
 use app\models\LoginForm;
+use app\models\Weather;
 use Exception;
 use Yii;
 use yii\filters\AccessControl;
@@ -15,7 +16,6 @@ use yii\web\Response;
 
 class SiteController extends Controller
 {
-
     private const PAGE_LIMIT = 8;
 
     /**
@@ -73,7 +73,9 @@ class SiteController extends Controller
 
     public function actionIndex(): string
     {
-        return $this->render('home');
+        return $this->render('home', [
+            'weather' => Weather::getWeather(['Brasilia', 'Tokyo', 'Munich', 'Pretoria', 'Auckland']),
+        ]);
     }
 
     /**
@@ -84,7 +86,7 @@ class SiteController extends Controller
     public function actionBooks(): string
     {
         return $this->render('books', [
-            'books' => Book::find()->all(),
+            'books' => Book::find()->all() ?? [],
         ]);
     }
 
@@ -115,6 +117,9 @@ class SiteController extends Controller
         $limit  = Yii::$app->request->get('limit', self::PAGE_LIMIT);
         $offset = (Yii::$app->request->get('page', 1) - 1) * $limit;
         $books  = Book::find()
+            ->orWhere(['like', 'title', '%' . Yii::$app->request->get('search') . '%', false])
+            ->orWhere(['like', 'description', '%' . Yii::$app->request->get('search') . '%', false])
+            ->orWhere(['like', 'author', '%' . Yii::$app->request->get('search') . '%', false])
             ->offset($offset)
             ->limit($limit);
 

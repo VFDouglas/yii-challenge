@@ -8,6 +8,7 @@ use app\assets\AppAsset;
 use app\widgets\Alert;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 AppAsset::register($this);
@@ -31,6 +32,7 @@ $this->registerLinkTag([
     'href' => Yii::getAlias('@web/favicon.ico'),
 ]);
 $this->registerJsFile('https://kit.fontawesome.com/7fc0456012.js');
+$this->registerJsFile('@web/js/app.js', ['position' => yii\web\View::POS_END]);
 $this->beginPage();
 ?>
 <!DOCTYPE html>
@@ -47,17 +49,23 @@ $this->beginPage();
 $this->beginBody();
 ?>
 <header id="header">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top bg-body-tertiary">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
                 <?=
                 Html::img(
-                    '@web/images/books.png',
+                    '/favicon.ico',
                     ['alt' => 'Books image logo', 'width' => 30]
                 );
                 ?>
                 <?= Yii::$app->name; ?>
             </a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link <?= Url::current() == '/books' ? 'active' : ''; ?>"
+                       aria-current="page" href="/books">Books</a>
+                </div>
+            </div>
             <div class="justify-content-end">
                 <?php
                 if (!Yii::$app->user->getIsGuest()) {
@@ -91,10 +99,9 @@ $this->beginBody();
 </main>
 <footer id="footer" class="mt-auto py-3 bg-light">
     <div class="container">
-        <div class="row text-muted">
-            <div class="col-md-6 text-center text-md-start">&copy; My
-                Company <?= date('Y'); ?></div>
-            <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
+        <div class="row text-muted mx-auto">
+            <div class="col-12 text-center">
+                &copy; Douglas Vicentini <?= date('Y'); ?></div>
         </div>
     </div>
 </footer>

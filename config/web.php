@@ -7,7 +7,7 @@ $db     = require __DIR__ . '/db.php';
 
 $config = [
     'id'         => 'books',
-    'name'       => 'Books',
+    'name'       => 'Yii',
     'basePath'   => dirname(__DIR__),
     'bootstrap'  => ['log'],
     'aliases'    => [
@@ -64,6 +64,15 @@ $config = [
                 '/books/delete/<bookId:\d+>' => 'site/delete',
                 '/logout'                    => 'site/logout',
             ],
+        ],
+        'redis'      => [
+            'class'    => 'path\to\RedisManager',
+            'hostname' => 'localhost',
+            'port'     => 6379,
+            'database' => 0,
+        ],
+        'session'    => [
+            'timeout' => 1800,
         ],
     ],
     'params'     => $params,

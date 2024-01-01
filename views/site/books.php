@@ -60,13 +60,23 @@ $this->registerJsFile('@web/js/books.js', ['position' => yii\web\View::POS_END, 
         </div>
     </div>
 </div>
-<div class="row justify-content-end mt-4">
-    <div class="col-12 col-sm-6 col-lg-4">
+<div class="row justify-content-end mt-4 gy-3">
+    <div class="col-12 col-md">
         <nav>
             <ul class="pagination justify-content-center" id="pagination"></ul>
         </nav>
     </div>
-    <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2 text-end">
+    <div class="col-12 col-sm-6 col-md">
+        <form id="search_books">
+            <div class="input-group mb-3">
+                <input type="search" class="form-control" id="search" placeholder="Title, description or author">
+                <button class="btn btn-success">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col-12 col-sm-6 col-md col-lg-3 text-end">
         <button class="btn btn-primary col-12 px-4" id="btn_add_book">New Book</button>
     </div>
 </div>
