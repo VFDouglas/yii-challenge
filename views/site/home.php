@@ -63,9 +63,20 @@ foreach ($weather['data'] as $key => $city) {
 $this->registerJsFile('@web/js/home.js', ['position' => yii\web\View::POS_END, 'defer' => true]);
 ?>
 <div class="container-fluid position-relative top-20">
-    <div class="row">
-        <div class="col-12">
-            <h4 class="text-center text-black-50">Current weather on different cities</h4>
+    <div class="row align-items-center">
+        <div class="col-12 col-md-7 col-lg">
+            <h4 class="text-black-50">Current weather on different cities</h4>
+        </div>
+        <div class="col-12 col-md-5 col-lg">
+            <form id="search_books">
+                <div class="input-group mb-3">
+                    <input type="search" class="form-control" name="cities"
+                           placeholder="Multiple cities separated by comma">
+                    <button class="btn btn-success">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
     <div class="row">

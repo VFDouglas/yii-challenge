@@ -73,8 +73,16 @@ class SiteController extends Controller
 
     public function actionIndex(): string
     {
+        $cities = Yii::$app->request->get('cities', ['Brasilia', 'Tokyo', 'Munich', 'Pretoria', 'Auckland']);
+
+        if (!is_array($cities)) {
+            $cities = explode(',', $cities);
+            $cities = array_map(function ($city) {
+                return trim($city);
+            }, $cities);
+        }
         return $this->render('home', [
-            'weather' => Weather::getWeather(['Brasilia', 'Tokyo', 'Munich', 'Pretoria', 'Auckland']),
+            'weather' => Weather::getWeather($cities),
         ]);
     }
 
