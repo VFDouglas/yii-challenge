@@ -8,7 +8,7 @@ use yii\base\Model;
 class Redis extends Model
 {
     public Client $client;
-    private const REDIS_CONTAINER = 'yii-challenge-redis-1';
+    private const REDIS_CONTAINER = 'yii-challenge_redis_1';
 
     public function __construct()
     {

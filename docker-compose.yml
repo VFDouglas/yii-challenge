@@ -15,7 +15,7 @@ services:
     image: 'mysql:latest'
     volumes:
       - ./docker/dbdata:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.txt:/docker-entrypoint-initdb.d/init.txt
     ports:
       - '3306:3306'
     environment:

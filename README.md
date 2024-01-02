@@ -20,19 +20,29 @@ REQUIREMENTS
 INSTRUCTIONS
 ------------
 
-Clone the project
+- Clone the project
 
 ```
 git clone https://github.com/VFDouglas/yii-challenge.git
 ```
 
-Open your IDE/editor and enter the project directory using Git as a terminal.
-Then run the install script
+- Open your IDE/editor and enter the project directory using Git as a terminal.
+  Then run the install script
 
 ```
 ./install.sh
 ```
 
 Confirm the asked prompts.
+
+- Run the command `docker-compose ps` and copy the MySQL container name.
+- Go to the file `/config/db.php` and change the content of the variable `$host` to the respective container name.
+- Go to the file `/models/Redis.php` and change the content of the constant `REDIS_CONTAINER` to the respective
+  container name.
+- Run the command:
+
+```
+docker-compose exec php php yii migrate --interactive=0 && rm -rf ./init.txt
+```
 
 When the script finishes, you should be able to run the project on http://localhost:8000/.

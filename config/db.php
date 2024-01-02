@@ -1,8 +1,10 @@
 <?php
 
+$host = 'yii-challenge_mysql_1';
+
 return [
     'class'    => 'yii\db\Connection',
-    'dsn'      => 'mysql:host=yii-challenge-mysql-1;port=3306;dbname=yii2basic',
+    'dsn'      => "mysql:host=$host;port=3306;dbname=yii2basic",
     'username' => 'root',
     'password' => 'root',
     'charset'  => 'utf8',
