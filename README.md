@@ -7,27 +7,30 @@ Template as a skeleton.
 
 It contains some features including user login/logout, a home page with the weather
 of some cities (you can search for your city as well) and a page to manage books.
-All of that with a responsive design.
 
-This project uses PHP (Yii Framework), MySQL and Redis.
+EXTRA FEATURES
+------------
+- Responsive design;
+- Docker;
+- MySQL as database and Redis to store API cache;
 
 REQUIREMENTS
 ------------
 
-- Docker Engine >= 17.04
-- Git Bash
+- Docker Engine >= 17.04;
+- Git Bash.
 
 INSTRUCTIONS
 ------------
 
-- Clone the project
+- Clone the project;
 
 ```
 git clone https://github.com/VFDouglas/yii-challenge.git
 ```
 
 - Open your IDE/editor and enter the project directory using Git as a terminal.
-  Then run the install script
+  Then run the install script;
 
 ```
 ./install.sh
@@ -35,10 +38,10 @@ git clone https://github.com/VFDouglas/yii-challenge.git
 
 Confirm the asked prompts.
 
-- Run the command `docker-compose ps` and copy the MySQL container name.
-- Go to the file `/config/db.php` and change the content of the variable `$host` to the respective container name.
+- Run the command `docker-compose ps` and copy the MySQL container name;
+- Go to the file `/config/db.php` and change the content of the variable `$host` to the respective container name;
 - Go to the file `/models/Redis.php` and change the content of the constant `REDIS_CONTAINER` to the respective
-  container name.
+  container name;
 - Run the command:
 
 ```
