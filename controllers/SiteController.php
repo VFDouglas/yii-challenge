@@ -11,6 +11,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\Application as WebApp;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -46,7 +47,7 @@ class SiteController extends Controller
 
     public function beforeAction($action): Response|bool|\yii\console\Response
     {
-        if (Yii::$app->user->isGuest && Url::current() != '/login') {
+        if (Yii::$app->user->isGuest && Url::current() != '/login' && Yii::$app instanceof WebApp) {
             return Yii::$app->getResponse()->redirect(['/login']);
         }
         if (!parent::beforeAction($action)) {

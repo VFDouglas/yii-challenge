@@ -2,15 +2,15 @@
 
 namespace tests\unit\models;
 
-use app\models\Weather;
+use app\models\Book;
 use Codeception\Test\Unit;
 
 class LoginFormTest extends Unit
 {
     private $model;
 
-    public function testWeatherData()
+    public function testBookData()
     {
-        verify(Weather::getWeather(['Brasilia']))->notEmpty();
+        verify(Book::find()->all())->notEmpty();
     }
 }
